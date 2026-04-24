@@ -257,6 +257,7 @@ export default function App() {
         await signInWithEmailAndPassword(auth, authEmail, authPassword);
       }
       setShowAuth(false);
+      setCurrentView('dashboard');
     } catch (error) {
       setAuthError(error.message.replace('Firebase: ', '')); // Clean up the error message slightly
     }
@@ -376,7 +377,7 @@ export default function App() {
       
       setResolution(tier === 'pro' || tier === 'plus' ? '1080p' : '720p');
       setDuration(tier === 'pro' ? '20s' : (tier === 'plus' ? '10s' : '5s'));
-      setCurrentView('create');
+      setCurrentView('dashboard');
     }, 1200);
   };
 
@@ -713,7 +714,7 @@ export default function App() {
             </div>
           ) : (
             <div className="bg-[#131826] border border-white/5 rounded-2xl p-5 shadow-sm h-full">
-              <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-white tracking-tight"><Sparkles className="w-4 h-4 text-orange-600" /> Video Prompt</h2>
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-white tracking-tight">Video Prompt</h2>
               
               <div className="mb-4">
                 <label className="block text-[11px] font-semibold text-slate-400 mb-1.5 flex items-center gap-1">
@@ -988,7 +989,7 @@ export default function App() {
         <div className="bg-orange-600/10 border border-orange-600/20 rounded-2xl p-8 flex flex-col relative shadow-md transform md:-translate-y-4 hover:-translate-y-6 transition-transform duration-500 ease-out">
           <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent rounded-2xl pointer-events-none"></div>
           <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-orange-600 to-amber-600 text-white text-[10px] font-bold px-4 py-1 rounded-full uppercase tracking-widest shadow-md border border-orange-500">Most Popular</div>
-          <h3 className="text-lg font-bold text-orange-500 mb-2 flex items-center gap-2"><Sparkles className="w-4 h-4 text-orange-600" /> Plus</h3>
+          <h3 className="text-lg font-bold text-orange-500 mb-2 flex items-center gap-2">Plus</h3>
           <div className="text-2xl text-white mb-2 tracking-tight">${billingCycle === 'yearly' ? '150' : '15'}<span className="text-[13px] text-orange-500/80">/{billingCycle === 'yearly' ? 'yr' : 'mo'}</span></div>
           <div className="h-5 mb-5 flex items-center">
             {billingCycle === 'yearly' && <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-md border border-emerald-500/20">You save $30 a year</span>}
@@ -1108,8 +1109,8 @@ export default function App() {
       {/* SIDEBAR NAVIGATION (Desktop) */}
       <aside className="w-56 bg-[#0B0F19] border-r border-white/5 flex-col h-full hidden lg:flex shrink-0 relative z-20 shadow-2xl">
         <div className="p-5 flex items-center gap-3 mb-4">
-          <div className="bg-gradient-to-br from-orange-600 to-amber-600 p-2 rounded-xl shadow-lg shadow-orange-600/30 border border-white/10">
-            <Sparkles className="text-white w-4 h-4" />
+          <div className="bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500 p-2 rounded-xl shadow-lg shadow-pink-500/30 border border-white/10">
+            <span className="text-white font-black italic flex items-center justify-center w-4 h-4 text-base">F</span>
           </div>
           <h1 className="font-bold text-lg text-white leading-tight tracking-tight">Fusion AI<br/><span className="text-[10px] font-medium text-slate-400 tracking-normal">Content Creator</span></h1>
         </div>
@@ -1156,7 +1157,9 @@ export default function App() {
         <header className="h-16 bg-[#0B0F19]/80 backdrop-blur-2xl border-b border-white/5 shrink-0 z-30 sticky top-0 w-full">
           <div className="max-w-[1400px] mx-auto w-full h-full px-5 md:px-6 flex items-center justify-between">
             <div className="flex items-center lg:hidden">
-              <div className="bg-gradient-to-br from-orange-600 to-amber-600 p-1.5 rounded-lg shadow-md mr-3 border border-white/10"><Sparkles className="w-3.5 h-3.5 text-white"/></div>
+              <div className="bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500 p-1.5 rounded-lg shadow-md mr-3 border border-white/10">
+                <span className="text-white font-black italic flex items-center justify-center w-3.5 h-3.5 text-sm">F</span>
+              </div>
               <h1 className="font-bold text-[15px] text-white tracking-tight">Fusion AI</h1>
             </div>
 
@@ -1237,8 +1240,8 @@ export default function App() {
           
           <div className="w-full max-w-md bg-[#131826] border border-white/5 rounded-[28px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)] relative z-10 animate-in zoom-in-95 duration-300 ease-out">
             <div className="flex flex-col items-center justify-center mb-6">
-              <div className="bg-gradient-to-br from-orange-600 to-amber-600 p-3.5 rounded-2xl shadow-lg shadow-orange-600/30 mb-4 border border-white/10">
-                <Sparkles className="w-5 h-5 text-white" />
+              <div className="bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500 p-3.5 rounded-2xl shadow-lg shadow-pink-500/30 mb-4 border border-white/10">
+                <span className="text-white font-black italic flex items-center justify-center w-5 h-5 text-xl">F</span>
               </div>
               <h1 className="text-2xl font-bold tracking-tight text-white">Fusion AI</h1>
               <p className="text-slate-400 text-[13px] mt-1 text-center">
