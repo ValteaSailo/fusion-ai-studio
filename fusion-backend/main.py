@@ -1,14 +1,25 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware  # Add this import
 from pydantic import BaseModel
 from worker import generate_video_task
 from celery.result import AsyncResult
 
 app = FastAPI(title="Zeroscope API")
 
+# --- ADD THIS CORS BLOCK ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all websites to connect (Safe for local testing)
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods (POST, GET, etc.)
+    allow_headers=["*"],  # Allows all headers
+)
+# ---------------------------
+
 # Request Model
 class PromptRequest(BaseModel):
     prompt: str
-    duration: str = "5s"  # E.g., "5s", "10s", or "20s" from frontend
+    duration: str = "5s"
 
 @app.post("/generate")
 def generate_video(request: PromptRequest):
