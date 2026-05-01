@@ -26,8 +26,10 @@ def load_models():
             torch_dtype=torch.float16
         )
         t2v_pipe.scheduler = DPMSolverMultistepScheduler.from_config(t2v_pipe.scheduler.config)
-        t2v_pipe.enable_model_cpu_offload() # Saves VRAM
-        t2v_pipe.enable_vae_slicing() # ADDED FOR 12GB VRAM (RTX 3080 Ti)
+        
+        # Move directly to your RTX 3080 Ti (Fixes accelerate bug & runs faster!)
+        t2v_pipe.to("cuda") 
+        t2v_pipe.enable_vae_slicing() # Keeps your 12GB VRAM safe
 
         print("Loading Video-to-Video Stitching Pipeline...")
         v2v_pipe = VideoToVideoSDPipeline.from_pretrained(
@@ -35,11 +37,13 @@ def load_models():
             torch_dtype=torch.float16
         )
         v2v_pipe.scheduler = DPMSolverMultistepScheduler.from_config(v2v_pipe.scheduler.config)
-        v2v_pipe.enable_model_cpu_offload()
-        v2v_pipe.enable_vae_slicing() # ADDED FOR 12GB VRAM (RTX 3080 Ti)
+        
+        # Move directly to your RTX 3080 Ti
+        v2v_pipe.to("cuda")
+        v2v_pipe.enable_vae_slicing() 
         print("Models loaded successfully!")
 
-# 3. AWS S3 Configuration
+# 3. AWS S3 Configuration (Commented out if saving locally)
 s3_client = boto3.client(
     's3',
     aws_access_key_id='YOUR_AWS_ACCESS_KEY',
@@ -96,7 +100,7 @@ def generate_video_task(self, prompt: str, target_seconds: int):
         local_filename = f"/tmp/{uuid.uuid4()}.mp4"
         imageio.mimsave(local_filename, all_frames, fps=fps)
         
-        # Upload to S3
+        # Upload to S3 (Or change this to just return local_filename if testing locally)
         self.update_state(state='PROCESSING', meta={'status': 'Uploading to cloud...'})
         s3_filename = f"generated/{os.path.basename(local_filename)}"
         
