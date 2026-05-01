@@ -55,7 +55,7 @@ def get_status(task_id: str):
     
     if task_result.state == 'PENDING':
         
-return {"state": "PENDING", "status": "Waiting in queue..."}
+
         
     elif task_result.state == 'PROCESSING':
         # Custom state sent from our worker.py so the user sees progress
