@@ -1,0 +1,11 @@
+uvicorn
+celery
+redis
+diffusers
+transformers
+accelerate
+torch
+imageio
+imageio-ffmpeg
+boto3
+pydantic
