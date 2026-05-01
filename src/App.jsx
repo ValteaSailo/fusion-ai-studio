@@ -477,7 +477,7 @@ export default function App() {
     setStatus("Sending to RunPod GPU...");
 
     // TODO: Replace with your actual RunPod API URL
-    const RUNPOD_URL = "http://127.0.0.1:8000](http://127.0.0.1:8000)";
+    const RUNPOD_URL = "http://127.0.0.1:8000";
 
     try {
       // 1. Send the prompt to your RunPod API
