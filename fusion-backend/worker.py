@@ -3,6 +3,7 @@ import torch
 import imageio
 import boto3
 import uuid
+import tempfile  # 🔴 Add this new import near the top
 from celery import Celery
 from diffusers import DiffusionPipeline, VideoToVideoSDPipeline, DPMSolverMultistepScheduler
 
@@ -96,8 +97,10 @@ def generate_video_task(self, prompt: str, target_seconds: int):
                 
         self.update_state(state='PROCESSING', meta={'status': 'Stitching and encoding MP4...'})
         
-        # Save to MP4
-        local_filename = f"/tmp/{uuid.uuid4()}.mp4"
+        # 🔴 REPLACED: Use tempfile to automatically find the correct Windows temp folder
+        temp_dir = tempfile.gettempdir()
+        local_filename = os.path.join(temp_dir, f"{uuid.uuid4()}.mp4")
+        
         imageio.mimsave(local_filename, all_frames, fps=fps)
         
         # Upload to S3 (Or change this to just return local_filename if testing locally)
