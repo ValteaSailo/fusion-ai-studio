@@ -1,3 +1,5 @@
+from worker import generate_video_task, celery_app  # <-- Add celery_app here
+from celery.result import AsyncResult
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware  # Add this import
 from pydantic import BaseModel
@@ -48,10 +50,12 @@ def get_status(task_id: str):
     """
     Frontend polls this endpoint to check if the video is ready.
     """
-    task_result = AsyncResult(task_id)
+    # Tell AsyncResult to use your Redis backend configuration
+    task_result = AsyncResult(task_id, app=celery_app) 
     
     if task_result.state == 'PENDING':
-        return {"state": "PENDING", "status": "Waiting in queue..."}
+        
+return {"state": "PENDING", "status": "Waiting in queue..."}
         
     elif task_result.state == 'PROCESSING':
         # Custom state sent from our worker.py so the user sees progress
