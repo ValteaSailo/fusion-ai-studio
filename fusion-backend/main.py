@@ -1,27 +1,24 @@
-from worker import generate_video_task, celery_app  # <-- Add celery_app here
-from celery.result import AsyncResult
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware  # Add this import
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from worker import generate_video_task
+from worker import generate_video_task, celery_app
 from celery.result import AsyncResult
 
 app = FastAPI(title="Zeroscope API")
 
-# --- ADD THIS CORS BLOCK ---
+# Allow React frontend to communicate with this API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all websites to connect (Safe for local testing)
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods (POST, GET, etc.)
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
-# ---------------------------
 
 # Request Model
 class PromptRequest(BaseModel):
     prompt: str
-    duration: str = "5s"
+    duration: str = "5s"  # E.g., "5s", "10s", or "20s" from frontend
 
 @app.post("/generate")
 def generate_video(request: PromptRequest):
@@ -50,12 +47,10 @@ def get_status(task_id: str):
     """
     Frontend polls this endpoint to check if the video is ready.
     """
-    # Tell AsyncResult to use your Redis backend configuration
-    task_result = AsyncResult(task_id, app=celery_app) 
+    task_result = AsyncResult(task_id, app=celery_app)
     
     if task_result.state == 'PENDING':
-        
-return {"state": "PENDING", "status": "Waiting in queue..."}
+        return {"state": "PENDING", "status": "Waiting in queue..."}
         
     elif task_result.state == 'PROCESSING':
         # Custom state sent from our worker.py so the user sees progress
