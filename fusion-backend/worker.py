@@ -26,8 +26,8 @@ def load_models():
             torch_dtype=torch.float16
         )
         t2v_pipe.scheduler = DPMSolverMultistepScheduler.from_config(t2v_pipe.scheduler.config)
-        t2v_pipe.enable_model_cpu_offload()
-        t2v_pipe.enable_vae_slicing() # 🔴 ADD THIS LINE FOR 12GB VRAM CARDS
+        t2v_pipe.enable_model_cpu_offload() # Saves VRAM
+        t2v_pipe.enable_vae_slicing() # ADDED FOR 12GB VRAM (RTX 3080 Ti)
 
         print("Loading Video-to-Video Stitching Pipeline...")
         v2v_pipe = VideoToVideoSDPipeline.from_pretrained(
@@ -36,7 +36,7 @@ def load_models():
         )
         v2v_pipe.scheduler = DPMSolverMultistepScheduler.from_config(v2v_pipe.scheduler.config)
         v2v_pipe.enable_model_cpu_offload()
-        v2v_pipe.enable_vae_slicing() # 🔴 ADD THIS LINE FOR 12GB VRAM CARDS
+        v2v_pipe.enable_vae_slicing() # ADDED FOR 12GB VRAM (RTX 3080 Ti)
         print("Models loaded successfully!")
 
 # 3. AWS S3 Configuration
