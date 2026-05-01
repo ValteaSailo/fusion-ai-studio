@@ -103,21 +103,17 @@ def generate_video_task(self, prompt: str, target_seconds: int):
         
         imageio.mimsave(local_filename, all_frames, fps=fps)
         
-        # Upload to S3 (Or change this to just return local_filename if testing locally)
-        self.update_state(state='PROCESSING', meta={'status': 'Uploading to cloud...'})
-        s3_filename = f"generated/{os.path.basename(local_filename)}"
+        # 🔴 LOCAL FIX: Skip AWS S3 upload and keep the file on your PC
+        self.update_state(state='PROCESSING', meta={'status': 'Saved locally!'})
         
-        s3_client.upload_file(
-            local_filename, 
-            BUCKET_NAME, 
-            s3_filename,
-            ExtraArgs={'ACL': 'public-read', 'ContentType': 'video/mp4'}
-        )
+        # (AWS code commented out for local testing)
+        # s3_filename = f"generated/{os.path.basename(local_filename)}"
+        # s3_client.upload_file(local_filename, BUCKET_NAME, s3_filename, ExtraArgs={'ACL': 'public-read', 'ContentType': 'video/mp4'})
+        # video_url = f"https://{BUCKET_NAME}.s3.amazonaws.com/{s3_filename}"
+        # os.remove(local_filename)
         
-        video_url = f"https://{BUCKET_NAME}.s3.amazonaws.com/{s3_filename}"
-        os.remove(local_filename) # Clean up the server drive
-        
-        return {"video_url": video_url, "prompt": prompt}
+        # Return the local file path so the task finishes successfully!
+        return {"video_url": local_filename, "prompt": prompt}
 
     except Exception as e:
         print(f"Error generating video: {e}")
