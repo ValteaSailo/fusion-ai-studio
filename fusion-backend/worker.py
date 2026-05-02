@@ -74,8 +74,11 @@ def generate_video_task(self, prompt: str, target_seconds: int):
                 # Chunk 1: Pure Text-to-Video
                 chunk_result = t2v_pipe(
                     prompt, 
+                    negative_prompt="text, watermark, copyright, blurry, deformed, static, noisy, grainy, ugly", # 🔴 Blocks garbage text/static
                     num_inference_steps=25, 
-                    num_frames=frames_per_chunk
+                    height=320, # 🔴 CRITICAL: Zeroscope breaks without this exact height
+                    width=576,  # 🔴 CRITICAL: Zeroscope breaks without this exact width
+                    num_frames=24 # 🔴 CRITICAL: 24 frames is the native limit before corruption
                 ).frames[0]
                 all_frames.extend(chunk_result)
                 
@@ -84,15 +87,17 @@ def generate_video_task(self, prompt: str, target_seconds: int):
                 # Take the last 8 frames (1 second) to maintain continuity
                 init_video = all_frames[-8:] 
                 
-                # 🔴 NEW: Pad the video up to 40 frames by repeating the last frame
-                # This gives the AI a 40-frame canvas to redraw and continue the animation
+                # 🔴 NEW: Pad the video up to 24 frames instead of 40
                 last_frame = init_video[-1]
-                init_video.extend([last_frame] * (frames_per_chunk - len(init_video)))
+                init_video.extend([last_frame] * (24 - len(init_video)))
                 
                 chunk_result = v2v_pipe(
                     prompt, 
+                    negative_prompt="text, watermark, copyright, blurry, deformed, static, noisy, grainy, ugly",
                     video=init_video, 
-                    num_inference_steps=25, 
+                    num_inference_steps=25,
+                    height=320, 
+                    width=576,
                     strength=0.75 # High strength allows scene progression while matching context
                 ).frames[0]
                 
