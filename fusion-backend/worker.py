@@ -84,11 +84,15 @@ def generate_video_task(self, prompt: str, target_seconds: int):
                 # Take the last 8 frames (1 second) to maintain continuity
                 init_video = all_frames[-8:] 
                 
+                # 🔴 NEW: Pad the video up to 40 frames by repeating the last frame
+                # This gives the AI a 40-frame canvas to redraw and continue the animation
+                last_frame = init_video[-1]
+                init_video.extend([last_frame] * (frames_per_chunk - len(init_video)))
+                
                 chunk_result = v2v_pipe(
                     prompt, 
                     video=init_video, 
                     num_inference_steps=25, 
-                    num_frames=frames_per_chunk,
                     strength=0.75 # High strength allows scene progression while matching context
                 ).frames[0]
                 
