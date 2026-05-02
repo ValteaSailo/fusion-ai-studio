@@ -74,11 +74,12 @@ def generate_video_task(self, prompt: str, target_seconds: int):
                 # Chunk 1: Pure Text-to-Video
                 chunk_result = t2v_pipe(
                     prompt, 
-                    negative_prompt="text, watermark, copyright, blurry, deformed, static, noisy, grainy, ugly", # 🔴 Blocks garbage text/static
-                    num_inference_steps=25, 
-                    height=320, # 🔴 CRITICAL: Zeroscope breaks without this exact height
-                    width=576,  # 🔴 CRITICAL: Zeroscope breaks without this exact width
-                    num_frames=24 # 🔴 CRITICAL: 24 frames is the native limit before corruption
+                    negative_prompt="text, watermark, copyright, blurry, deformed, static, noisy, grainy, ugly, worst quality", 
+                    num_inference_steps=40, # 🔴 INCREASED: 25 steps leaves the video looking blurry and unfinished
+                    height=320, 
+                    width=576,  
+                    num_frames=24,
+                    guidance_scale=12.5 # 🔴 THE MAGIC NUMBER: Zeroscope requires exactly 12.5, otherwise it makes noisy static
                 ).frames[0]
                 all_frames.extend(chunk_result)
                 
@@ -93,12 +94,13 @@ def generate_video_task(self, prompt: str, target_seconds: int):
                 
                 chunk_result = v2v_pipe(
                     prompt, 
-                    negative_prompt="text, watermark, copyright, blurry, deformed, static, noisy, grainy, ugly",
+                    negative_prompt="text, watermark, copyright, blurry, deformed, static, noisy, grainy, ugly, worst quality",
                     video=init_video, 
-                    num_inference_steps=25,
+                    num_inference_steps=40, # 🔴 INCREASED to 40
                     height=320, 
                     width=576,
-                    strength=0.75 # High strength allows scene progression while matching context
+                    guidance_scale=12.5, # 🔴 REQUIRED for Zeroscope
+                    strength=0.85 # 🔴 Increased so it has enough power to animate the frozen padded frames
                 ).frames[0]
                 
                 # Drop the first 8 frames of the new result so it doesn't stutter/overlap
