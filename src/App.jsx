@@ -474,7 +474,7 @@ export default function App() {
     if (mode === 'creator') setCreatorStep(3);
     setVideoUrl(null);
     setProgress(5);
-    setStatus("Generating...");
+    setStatus("Sending to RunPod GPU...");
 
     // TODO: Replace with your actual RunPod API URL
     const RUNPOD_URL = "http://127.0.0.1:8000";
